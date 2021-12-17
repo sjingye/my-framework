@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const devMode = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
   entry: {
@@ -33,7 +33,7 @@ module.exports = {
         test: /\.(sa|sc|c)ss$/,
         use: [
           // 'style-loader': 将 JS 字符串生成为 style 节点
-          devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+          isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
           // 将 CSS 转化成 CommonJS 模块
           "css-loader",
           {
