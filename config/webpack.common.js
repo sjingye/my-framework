@@ -3,6 +3,10 @@
  */
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const devMode = process.env.NODE_ENV !== "production";
 
 module.exports = {
   entry: {
@@ -26,23 +30,35 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          // 'style-loader': 将 JS 字符串生成为 style 节点
+          devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+          // 将 CSS 转化成 CommonJS 模块
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    "postcss-preset-env",
+                    {
+                      // Options
+                      browsers: 'last 2 versions',
+                    },
+                  ],
+                ],
+              },
+            },
+          },
+          // 将 Sass 编译成 CSS
+          "sass-loader",
+        ],
       },
       {
-        test: /\.sass$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-      {
-        loader: require.resolve("file-loader"),
-        // Exclude `js` files to keep "css" loader working as it injects
-        // its runtime that would otherwise be processed through "file" loader.
-        // Also exclude `html` and `json` extensions so they get processed
-        // by webpacks internal loaders.
-        exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-        options: {
-          name: "static/media/[name].[hash:8].[ext]",
-        },
+        test: /\.(png|jpe?g|gif)$/i,
+        type: "asset/resource",
       },
     ],
   },
@@ -65,5 +81,25 @@ module.exports = {
       // Load a custom template (lodash by default)
       template: "./index.html",
     }),
+    new MiniCssExtractPlugin(),
   ],
+  optimization: {
+    minimizer: [
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.imageminMinify,
+          options: {
+            // Lossless optimization with custom option
+            // Feel free to experiment with options for better result for you
+            plugins: [
+              ["gifsicle", { interlaced: true }],
+              ["jpegtran", { progressive: true }],
+              ["optipng", { optimizationLevel: 5 }],
+              // Svgo configuration here https://github.com/svg/svgo#configuration
+            ],
+          },
+        },
+      }),
+    ],
+  },
 };

@@ -1,7 +1,14 @@
 import React, { FC } from "react";
+import mountainPic from "../../asset/img/mountain-pic.jpg";
+import './index.scss'
 
 const Home: FC = () => {
-  return <div>home</div>;
+  return (
+    <div className="home">
+      <p>测试图片loader</p>
+      <img className="img" src={mountainPic} />
+    </div>
+  );
 };
 
 export default Home;
