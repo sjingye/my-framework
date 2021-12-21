@@ -1,3 +1,28 @@
 {
-  "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
+  //  babel-loader 使用 babel 解析文件
+  // @babel/core 是 babel 的核心模块
+
+  // @babel/preset-env: 根据设置的目标浏览器环境（browserslist）找出所需的插件去转译 ES6+ 语法。比如 const 或 let 转译为 var 
+  // @babel/preset-react 转译 jsx 语法
+
+  "presets": [
+    [
+    "@babel/preset-env",
+    {
+      // 防止babel将任何模块类型都转译成CommonJS类型，导致tree-shaking失效问题
+      "modules": false
+    }
+  ], "@babel/preset-react", "@babel/preset-typescript"],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": {
+          "version": 3,
+          "proposals": true
+        },
+        "useESModules": true
+      }
+    ]
+  ]
 }

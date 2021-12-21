@@ -10,3 +10,5 @@
 
 * lint-staged: 只对我们 git 缓存区最新改动过的文件进行以上的格式化和 lint 规则校验
 * husky: 它会提供一些钩子，比如执行 git commit 之前的钩子 pre-commit ，借助这个钩子我们就能执行 lint-staged 所提供的代码文件格式化及 lint 规则校验
+
+[babel]https://juejin.cn/post/6844904008679686152

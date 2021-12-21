@@ -12,6 +12,8 @@ module.exports = {
   entry: {
     app: "./src/index.tsx",
   },
+  // stats：当设为 error-only 时，终端中只会打印错误日志，这个配置个人觉得很有用，
+  // 现在开发中经常会被一堆的 warn 日志占满，比如一些 eslint 的提醒规则，编译信息等，头疼的很
   stats: "errors-only",
   module: {
     rules: [
@@ -21,12 +23,12 @@ module.exports = {
           {
             loader: "babel-loader",
             options: {
+              // babel-loader 在执行的时候，可能会产生一些运行期间重复的公共文件，造成代码体积大冗余，同时也会减慢编译效率，
+              // 所以我们开启 cacheDirectory 将这些公共文件缓存起来，下次编译就会加快很多
               cacheDirectory: true,
             },
           },
         ],
-        // 必须用绝对位置
-        // include: path.resolve(__dirname, "src"),
         exclude: /node_modules/,
       },
       {
@@ -63,8 +65,12 @@ module.exports = {
     ],
   },
   resolve: {
-    //If multiple files share the same name but have different extensions, webpack will resolve the one with the extension listed first in the array and skip the rest.
+    //If multiple files share the same name but have different extensions,
+    //  webpack will resolve the one with the extension listed first in the array and skip the rest.
     extensions: [".ts", ".tsx", ".js"],
+    alias: {
+      '@': path.resolve(__dirname, "src")
+    }
   },
   output: {
     filename: "[name].bundle.js",
