@@ -5,7 +5,9 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WebpackBar = require('webpackbar')
+const WebpackBar = require('webpackbar');
+const TerserPlugin = require("terser-webpack-plugin");
+// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -100,9 +102,28 @@ module.exports = {
       name: isDevelopment ? '正在启动' : '正在打包',
       color: '#fa8c16',
     }),
+    // new HardSourceWebpackPlugin(),
+    // 上面我们配置 terser 时说过，打包时会把代码中所有注释去除，除了一些有特殊标记的比如 @preserve 这种就会保留。
+    // 我们希望别人在使用我们开发的包时，可以看到我们自己写好的声明注释（比如 react 就有），
+    // 就可以使用 webpack 内置的 BannerPlugin ，无需安装！
+    new webpack.BannerPlugin({
+      raw: true,
+      banner: '/** @preserve Powered by react-ts-quick-starter (https://github.com/vortesnail/react-ts-quick-starter) */',
+    }),
   ],
   optimization: {
+    // 首先增加了 minimize ，它可以指定压缩器，如果我们设为 true ，就默认使用 terser-webpack-plugin ，设为 false 即不压缩代码。
+    // 接下来在 minimize 中判断如果是生产环境，就开启压缩。
+    // extractComments 设为 false 意味着去除所有注释，除了有特殊标记的注释，比如 @preserve 标记，后面我们会利另一个插件来生成我们的自定义注释。
+    // pure_funcs 可以设置我们想要去除的函数，比如我就将代码中所有 console.log 去除。
+    minimize: !isDevelopment,
     minimizer: [
+      !isDevelopment && new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          compress: { pure_funcs: ['console.log'] },
+        }
+      }),
       new ImageMinimizerPlugin({
         minimizer: {
           implementation: ImageMinimizerPlugin.imageminMinify,
@@ -118,6 +139,33 @@ module.exports = {
           },
         },
       }),
+      
     ],
+    splitChunks: {
+      chunks: 'async',
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
   },
+  // 不再打包到dist文件夹中，比如可以通过cdn方式引入固定版本，同时从package.json中删除
+  // externals: {
+  //   react: 'React',
+  //   'react-dom': 'ReactDOM',
+  // },
 };
