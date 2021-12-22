@@ -59,7 +59,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|ico)$/i,
         type: "asset/resource",
       },
     ],
@@ -69,12 +69,12 @@ module.exports = {
     //  webpack will resolve the one with the extension listed first in the array and skip the rest.
     extensions: [".ts", ".tsx", ".js"],
     alias: {
-      '@': path.resolve(__dirname, "src")
+      '@': path.resolve(__dirname, "../src")
     }
   },
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "../dist"),
     clean: true,
   },
   // When importing a module whose path matches one of the following, just
@@ -83,9 +83,16 @@ module.exports = {
   // dependencies, which allows browsers to cache those libraries between builds.
   plugins: [
     new HtmlWebpackPlugin({
-      title: "my framework",
       // Load a custom template (lodash by default)
-      template: "./index.html",
+      template: "./public/index.html",
+      favicon: "./public/favicon.ico",
+      /* 
+      特别注意⚠️：
+      在讲基础配置配置 html-webpack-plugin 时，注释中特别强调过要配置 cache: false ，
+      如果不加的话，你代码修改之后刷新页面，html 文件不会引入任何打包出来的 js 文件，
+      自然也没有执行任何 js 代码，特别可怕，我搞了好久，查了 copy-webpack-plugin 官方 issue 才找到的解决方案。
+      */
+      cache: false
     }),
     new MiniCssExtractPlugin(),
   ],

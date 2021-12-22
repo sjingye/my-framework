@@ -7,5 +7,12 @@ module.exports = merge(common, {
   devServer: {
     static: "./dist",
     port: 3030,
+    historyApiFallback: true
+  //   {
+  //     rewrites: [
+  //         // shows favicon
+  //         { from: /favicon.ico/, to: '[path/to/favicon]' }
+  //     ]
+  // }
   },
 });
