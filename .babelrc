@@ -10,6 +10,8 @@
     "@babel/preset-env",
     {
       // 防止babel将任何模块类型都转译成CommonJS类型，导致tree-shaking失效问题
+      // tree-shaking 是 webpack 内置的打包代码优化神器，
+      // 在生产环境下，即 mode 设置为 production 时，打包后会将通过 ES6 语法 import 引入的未使用的代码去除。
       "modules": false
     }
   ], "@babel/preset-react", "@babel/preset-typescript"],
