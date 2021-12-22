@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
-const proxySetting = require("../src/services/setProxy");
+const proxySetting = require("../src/services/setProxy.ts");
 
 module.exports = merge(common, {
   mode: "development",

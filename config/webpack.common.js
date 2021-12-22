@@ -1,6 +1,7 @@
 /**
- * webpack config文件的相对位置 是参照于 项目目录的
+ * webpack common 文件
  */
+ const webpack = require('webpack')
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
@@ -70,7 +71,7 @@ module.exports = {
   resolve: {
     //If multiple files share the same name but have different extensions,
     //  webpack will resolve the one with the extension listed first in the array and skip the rest.
-    extensions: [".ts", ".tsx", ".js"],
+    extensions: [".tsx", ".ts", ".js"],
     alias: {
       '@': path.resolve(__dirname, "../src")
     }
@@ -139,8 +140,7 @@ module.exports = {
           },
         },
       }),
-      
-    ],
+    ].filter(Boolean),
     splitChunks: {
       chunks: 'async',
       minSize: 20000,
