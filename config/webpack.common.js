@@ -5,6 +5,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WebpackBar = require('webpackbar')
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -95,6 +96,10 @@ module.exports = {
       cache: false
     }),
     new MiniCssExtractPlugin(),
+    new WebpackBar({
+      name: isDevelopment ? '正在启动' : '正在打包',
+      color: '#fa8c16',
+    }),
   ],
   optimization: {
     minimizer: [
