@@ -8,6 +8,7 @@ const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WebpackBar = require('webpackbar');
 const TerserPlugin = require("terser-webpack-plugin");
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -27,6 +28,7 @@ module.exports = {
           {
             loader: "babel-loader",
             options: {
+              // 优化手段
               // babel-loader 在执行的时候，可能会产生一些运行期间重复的公共文件，造成代码体积大冗余，同时也会减慢编译效率，
               // 所以我们开启 cacheDirectory 将这些公共文件缓存起来，下次编译就会加快很多
               cacheDirectory: true,
@@ -98,6 +100,18 @@ module.exports = {
       */
       cache: false
     }),
+    // dll新增代码
+    // 此插件配置在 webpack 的主配置文件中，此插件会把 dll-only-bundles 引用到需要的预编译的依赖中。
+    new webpack.DllReferencePlugin({
+      context: path.resolve(__dirname),
+      manifest: path.resolve(__dirname, '../dll/manifest.json'),
+    }),
+    // 将某个文件打包输出去，并在html中自动引入该资源
+    new AddAssetHtmlPlugin({ 
+      filepath: path.resolve(__dirname, "../dll/dllFile.js"),
+      outputPath: "dll", // 如果设置，将用作文件的输出目录。
+      publicPath: "dll", // 如果设置，将用作脚本或链接标记的公共路径。
+     }),
     new MiniCssExtractPlugin(),
     new WebpackBar({
       name: isDevelopment ? '正在启动' : '正在打包',

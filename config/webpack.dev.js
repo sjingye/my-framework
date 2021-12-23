@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const proxySetting = require("../src/services/setProxy.ts");
@@ -10,15 +9,10 @@ module.exports = merge(common, {
     static: "./dist",
     port: 3030,
     historyApiFallback: true,
-    proxy: { ...proxySetting }
-  //   {
-  //     rewrites: [
-  //         // shows favicon
-  //         { from: /favicon.ico/, to: '[path/to/favicon]' }
-  //     ]
-  // }
+    // 启用gzip
+    compress: true,
+    // 开启 HotModuleReplacementPlugin
+    hot: true,
+    proxy: { ...proxySetting },
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ]
 });
